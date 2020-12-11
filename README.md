@@ -4,6 +4,7 @@
 ## File structure
 * [`./day-01`](./day-01): Report Repair
 * [`./day-02`](./day-02): Password Philosophy
+* [`./day-03`](./day-03): Toboggan Trajectory
 
 ## License
 This code is available with an MIT License. Take a look at the `LICENSE` document for details.
