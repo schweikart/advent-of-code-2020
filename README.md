@@ -7,6 +7,7 @@
 * [`./day-03`](./day-03): Toboggan Trajectory
 * [`./day-04`](./day-04): Passport Processing
 * [`./day-05`](./day-05): Binary Boarding
+* [`./day-06`](./day-06): Custom Customs
 
 ## License
 This code is available with an MIT License. Take a look at the `LICENSE` document for details.
