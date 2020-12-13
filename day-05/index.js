@@ -56,4 +56,15 @@ function partOne() {
     return highestId;
 }
 
+function partTwo() {
+    const sortedSeats = seats.map(seat => seat.id).sort((a,b) => a - b);
+    
+    for (let i = 1; i < sortedSeats.length; i++) {
+        if ((sortedSeats[i - 1] + 1) != sortedSeats[i]) {
+            return sortedSeats[i - 1] + 1;
+        }
+    }
+}
+
 console.log(`Part one: Highest seat ID: ${partOne()}`);
+console.log(`Part two: My seat ID: ${partTwo()}`);
