@@ -40,4 +40,25 @@ function partOne() {
     return countOfSums;
 }
 
+function partTwo() {
+    let sumOfCounts = 0;
+    groups.forEach(group => {
+        const reference = group.personInputs[0];
+
+        // TODO find a better name for this variable :)
+        let countOfQuestionsThatEveryoneAnsweredYesTo = 0;
+
+        for (let i = 0; i < reference.length; i++) {
+            const currentQuestion = reference[i];
+            if (group.personInputs.every(personInput => personInput.includes(currentQuestion))) {
+                countOfQuestionsThatEveryoneAnsweredYesTo++;
+            }
+        }
+
+        sumOfCounts += countOfQuestionsThatEveryoneAnsweredYesTo;
+    });
+    return sumOfCounts;
+}
+
 console.log(`Part one: The sum of counts is ${partOne()}`);
+console.log(`Part two: The sum of counts is ${partTwo()}`);
