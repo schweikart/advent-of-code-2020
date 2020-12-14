@@ -72,6 +72,19 @@ function containsBagOfColorIndirectly(rule, color) {
     return false;
 }
 
+/**
+ * Counts how many bags are inside a given bag.
+ * @param {string} color the color of the bag to count contained bags of.
+ */
+function countBagsWithin(color) {
+    let count = 0;
+    getRuleByColor(color).contents.forEach(content => {
+        count += content.amount;
+        count += content.amount * countBagsWithin(content.color);
+    });
+    return count;
+}
+
 function partOne() {
     let count = 0;
     rules.forEach(rule => {
@@ -82,4 +95,9 @@ function partOne() {
     return count;
 }
 
+function partTwo() {
+    return countBagsWithin('shiny gold');
+}
+
 console.log(`Part one: ${partOne()} bag colors may contain the 'shiny gold' colored bag indirectly.`);
+console.log(`Part two: ${partTwo()} bags are contained withing a 'shiny gold' bag.`);
