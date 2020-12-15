@@ -9,6 +9,7 @@
 * [`./day-05`](./day-05): Binary Boarding
 * [`./day-06`](./day-06): Custom Customs
 * [`./day-07`](./day-07): Handy Haversacks
+* [`./day-08`](./day-08): Handheld halting
 
 ## License
 This code is available with an MIT License. Take a look at the `LICENSE` document for details.
