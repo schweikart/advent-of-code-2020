@@ -1,5 +1,5 @@
 # Day 07: Handy Haversacks
-The ["Handy Haversacks" problem](https://adventofcode.com/2020/day/7) is about ???.
+The ["Handy Haversacks" problem](https://adventofcode.com/2020/day/7) is about traversing and parsing tree-like data structures.
 
 ## Running this solution
 Required software:
