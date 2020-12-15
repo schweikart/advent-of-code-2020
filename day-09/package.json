@@ -1,0 +1,23 @@
+{
+  "name": "day-09",
+  "version": "1.0.0",
+  "description": "Encoding Error",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schweikart/advent-of-code-2020.git"
+  },
+  "keywords": [
+    "advent-of-code"
+  ],
+  "author": "Max Schweikart",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/schweikart/advent-of-code-2020/issues"
+  },
+  "homepage": "https://github.com/schweikart/advent-of-code-2020#readme"
+}

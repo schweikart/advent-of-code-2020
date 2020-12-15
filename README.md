@@ -10,6 +10,7 @@
 * [`./day-06`](./day-06): Custom Customs
 * [`./day-07`](./day-07): Handy Haversacks
 * [`./day-08`](./day-08): Handheld halting
+* [`./day-09`](./day-09): Encoding Error
 
 ## License
 This code is available with an MIT License. Take a look at the `LICENSE` document for details.
