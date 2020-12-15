@@ -70,7 +70,8 @@ function executeInstruction(process, instruction) {
 }
 
 /**
- * Runs the program until before any instruction is invoked a second time.
+ * Runs the program until before any instruction is invoked a second time or
+ * until it reaches the end.
  */
 function runProgramUntilLoop() {
     const process = {
@@ -79,17 +80,63 @@ function runProgramUntilLoop() {
         program,
     };
 
-    const next = () => process.program[process.nextInstructionIndex];
+    const next = () => {
+        if (process.nextInstructionIndex >= process.program.length) {
+            return undefined;
+        } else {
+            return process.program[process.nextInstructionIndex];
+        }
+    }
 
-    for (let instruction = next(); instruction.executionCount === 0; instruction = next()) {
+    for (let instruction = next(); instruction !== undefined && instruction.executionCount === 0; instruction = next()) {
         executeInstruction(process, instruction);
     }
     
     return process;
 }
 
+function switchAndRun(switchIndex) {
+    const oldOpCode = program[switchIndex].opCode;
+
+    // switch op code
+    program[switchIndex].opCode = oldOpCode === 'nop' ? 'jmp' : 'nop';
+
+    const process = runProgramUntilLoop();
+
+    // switch back op code
+    program[switchIndex].opCode = oldOpCode;
+
+    return {
+        aborted: process.nextInstructionIndex < process.program.length,
+        accumulator: process.accumulator,
+    }
+}
+
+function resetExecutionCounters() {
+    program.forEach(instruction => {
+        instruction.executionCount = 0;
+    });
+}
+
 function partOne() {
-    return runProgramUntilLoop().accumulator;
+    return runProgramUntilLoop(program).accumulator;
+}
+
+function partTwo() {
+    // experimentally switch individual 'nop' and 'jmp' instructions
+    for (let currentSwitchIndex = 0; currentSwitchIndex < program.length; currentSwitchIndex++) {
+        const curr = program[currentSwitchIndex];
+
+        if ((curr.opCode === 'nop' && curr.argument !== 0 && curr.argument !== 1) || // nop +0 -> jmp +0 (would create infinite loop), nop +1 -> jmp +1 (would not change execution flow)
+                (curr.opCode === 'jmp' && curr.argument !== 1)) { // jmp +1 -> nop +1 (would not change execution flow)
+            resetExecutionCounters();
+            const result = switchAndRun(currentSwitchIndex);
+            if (!result.aborted) {
+                return result.accumulator;
+            }
+        }
+    }
 }
 
 console.log(`Part one: ${partOne()} is the value in the accumulator before the program looped.`)
+console.log(`Part two: ${partTwo()} is the value in the accumulator after the program terminated.`);
