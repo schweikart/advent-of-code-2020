@@ -21,21 +21,39 @@ if (grid[grid.length - 1] === '') {
 }
 
 /**
+ * Checks whether a given position is valid on a given grid.
+ * @param {*} grid the grid to check the position on. 
+ * @param {*} x the horizontal coordinate of the position.
+ * @param {*} y the vertical coordinate of the position.
+ */
+function isValidPosition(grid, x, y) {
+    return y >= 0 && y < grid.length && x >= 0 && x < grid[y].length
+}
+
+/**
  * Gets the seat state (., #, L) of a seat spot at a given position, even if the
  * position is not valid.
  * @param {number} x the horizontal position of the seat.
  * @param {number} y the vertical position of the seat.
  */
 function getSeatState(grid, x, y) {
-    if (y >= 0 && y < grid.length && x >= 0 && x < grid[y].length) {
+    if (isValidPosition(grid, x, y)) {
         return grid[y][x];
     } else {
         return '.';
     }
 }
 
+/**
+ * Changes the state of a given seat to a given state.
+ * @param {*} grid the grid to set a seat state on. 
+ * @param {*} x the horizontal position of the seat.
+ * @param {*} y the vertical position of the seat.
+ * @param {*} state the new state of the seat. May be 'L' for an empty seat or
+ * '#' for an occupied seat.
+ */
 function setSeatState(grid, x, y, state) {
-    if (y >= 0 && y < grid.length && x >= 0 && x < grid[y].length) {
+    if (isValidPosition(grid, x, y)) {
         if (state === '#' || state === 'L') {
             grid[y] = grid[y].substr(0, x) + state + grid[y].substr(x + 1);
         } else {
@@ -83,6 +101,41 @@ function countAjacentOccupiedSeats(grid, x, y) {
 }
 
 /**
+ * Checks whether the first seat visible from a base position in a given direction is occupied.
+ * @param {*} grid the grid to check. 
+ * @param {*} x the horizontal base position.
+ * @param {*} y the vertical base position.
+ * @param {*} dx the horizontal direction.
+ * @param {*} dy the vertical direction.
+ */
+function isFirstSeatInDirectionOccupied(grid, x, y, dx, dy) {
+    for (let curX = x + dx, curY = y + dy; isValidPosition(grid, curX, curY); curX += dx, curY += dy) {
+        if (isSeat(grid, curX, curY)) {
+            return isSeatOccupied(grid, curX, curY);
+        }
+    }
+    return false;
+}
+
+/**
+ * Counts how many visible seats to a given seat are occupied. Visible seats are
+ * the ones that are first in any direction from the base seat.
+ * @param {number} x the horizontal position of the seat.
+ * @param {number} y the vertical position of the seat.
+ */
+function countVisibleOccupiedSeats(grid, x, y) {
+    let count = 0;
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+            if ((dx != 0 || dy != 0) && isFirstSeatInDirectionOccupied(grid, x, y, dx, dy)) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+/**
  * Creates a copy of a given grid and returns it.
  * @param {*} grid the grid to copy.
  */
@@ -100,16 +153,18 @@ function gridEquals(gridA, gridB) {
 /**
  * Runs a simulation step on the given grid and returns the new grid.
  * @param {*} grid the grid to simulate.
+ * @param {*} countOccupiedSeats a function that counts the relevant occupied seats.
+ * @param {number} occupationThreshold the minimum amount of occupied occupied seats that make a passenger leave their seat 
  */
-function simulateStep(grid) {
+function simulateStep(grid, countOccupiedSeats, occupationThreshold) {
     const nextGrid = copyGrid(grid);
     for (let y = 0; y < grid.length; y++) {
         for (let x = 0; x < grid[y].length; x++) {
             if (isSeat(grid, x, y)) {
                 const isOccupied = isSeatOccupied(grid, x, y);
-                const occupiedAmount = countAjacentOccupiedSeats(grid, x, y);
+                const occupiedAmount = countOccupiedSeats(grid, x, y);
 
-                if (isOccupied && occupiedAmount >= 4) {
+                if (isOccupied && occupiedAmount >= occupationThreshold) {
                     setSeatState(nextGrid, x, y, 'L');
                 } else if (!isOccupied && occupiedAmount === 0) {
                     setSeatState(nextGrid, x, y, '#');
@@ -123,13 +178,15 @@ function simulateStep(grid) {
 /**
  * Runs simulation steps on a grid until it stabilizes.
  * @param {*} grid the base grid to simulate.
+ * @param {*} countOccupiedSeats a function that counts the relevant occupied seats.
+ * @param {number} occupationThreshold the minimum amount of occupied occupied seats that make a passenger leave their seat 
  */
-function simulateUntilStable(grid) {
+function simulateUntilStable(grid, countOccupiedSeats, occupationThreshold) {
     let nextGrid = grid, currentGrid = [];
 
     while (!gridEquals(currentGrid, nextGrid)) {
         currentGrid = nextGrid;
-        nextGrid = simulateStep(currentGrid);
+        nextGrid = simulateStep(currentGrid, countOccupiedSeats, occupationThreshold);
     }
 
     return nextGrid;
@@ -160,7 +217,12 @@ function countTotalOccupiedSeats(grid) {
 }
 
 function partOne() {
-    return countTotalOccupiedSeats(simulateUntilStable(grid));
+    return countTotalOccupiedSeats(simulateUntilStable(grid, countAjacentOccupiedSeats, 4));
 }
 
-console.log(`Part one: ${partOne()} seats are occupied once the map is stable.`)
+function partTwo() {
+    return countTotalOccupiedSeats(simulateUntilStable(grid, countVisibleOccupiedSeats, 5));
+}
+
+console.log(`Part one: ${partOne()} seats are occupied once the map is stable.`);
+console.log(`Part two: ${partTwo()} seats are occupied once the map is stable.`)
